@@ -31,6 +31,8 @@ import {LineBreakNode} from './nodes/LexicalLineBreakNode';
 import {ParagraphNode} from './nodes/LexicalParagraphNode';
 import {RootNode} from './nodes/LexicalRootNode';
 
+export type Spread<T1, T2> = {[K in Exclude<keyof T1, keyof T2>]: T1[K]} & T2;
+
 export type EditorThemeClassName = string;
 
 export type TextNodeThemeClasses = {
@@ -139,7 +141,9 @@ export type UpdateListener = (arg0: {
   tags: Set<string>;
 }) => void;
 
-export type DecoratorListener = (decorator: Record<NodeKey, unknown>) => void;
+export type DecoratorListener<T = unknown> = (
+  decorator: Record<NodeKey, T>,
+) => void;
 
 export type RootListener = (
   rootElement: null | HTMLElement,
@@ -493,7 +497,7 @@ export class LexicalEditor {
     };
   }
 
-  registerDecoratorListener(listener: DecoratorListener): () => void {
+  registerDecoratorListener<T>(listener: DecoratorListener<T>): () => void {
     const listenerSetOrMap = this._listeners.decorator;
     listenerSetOrMap.add(listener);
     return () => {
@@ -587,11 +591,9 @@ export class LexicalEditor {
     };
   }
 
-  registerNodeTransform(
-    // There's no Flow-safe way to preserve the T in Transform<T>, but <T = LexicalNode> in the
-    // declaration below guarantees these are LexicalNodes.
-    klass: Class<LexicalNode>,
-    listener: Transform<LexicalNode>,
+  registerNodeTransform<T extends LexicalNode>(
+    klass: Class<T>,
+    listener: Transform<T>,
   ): () => void {
     // @ts-expect-error TODO Replace Class utility type with InstanceType
     const type = klass.getType();
@@ -632,8 +634,8 @@ export class LexicalEditor {
     return dispatchCommand(this, type, payload);
   }
 
-  getDecorators(): Record<NodeKey, unknown> {
-    return this._decorators;
+  getDecorators<T>(): Record<NodeKey, T> {
+    return this._decorators as Record<NodeKey, T>;
   }
 
   getRootElement(): null | HTMLElement {
