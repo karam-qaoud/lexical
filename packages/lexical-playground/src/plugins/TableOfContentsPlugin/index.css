@@ -2,10 +2,7 @@
   background-color: #c9ccd1;
   height: 20px;
   margin: 0 4px;
-  width: 4px;
-}
-.bar:last-of-type {
-  border-radius: 5px;
+  width: 2px;
 }
 
 .circle {
@@ -56,6 +53,7 @@
   padding: 10px;
   border-radius: 10px;
   overflow-x: hidden;
+  color: #65676b;
 }
 
 .toc {
