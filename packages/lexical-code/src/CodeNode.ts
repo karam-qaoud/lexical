@@ -52,6 +52,7 @@ import {
   getFirstCodeNodeOfLine,
 } from './CodeHighlightNode';
 import * as Prism from 'prismjs';
+import {$createDivNode} from './../../lexical/src/nodes/LexicalDivNode';
 
 export type SerializedCodeNode = Spread<
   {
@@ -342,7 +343,7 @@ function convertDivElement(domNode: Node): DOMConversionOutput {
   const isCode = isCodeElement(div);
   if (!isCode && !isCodeChildElement(div)) {
     return {
-      node: null,
+      node: $createDivNode(),
     };
   }
   return {
